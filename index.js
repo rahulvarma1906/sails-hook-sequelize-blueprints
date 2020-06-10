@@ -58,11 +58,11 @@ module.exports = function(sails) {
         // e.g. '/frog/jump': 'FrogController.jump'
         actions: true,
         // e.g. '/frog': 'FrogController.index'
-        index: false,
+        index: true,
         // e.g. '/frog/find/:id?': 'FrogController.find'
-        shortcuts: false,
+        shortcuts: true,
         // e.g. 'get /frog/:id?': 'FrogController.find'
-        rest: false,
+        rest: true,
         // Blueprint/Shadow-Route Modifiers
         //
         // e.g. 'get /api/v2/frog/:id?': 'FrogController.find'
@@ -81,10 +81,11 @@ module.exports = function(sails) {
         // Whether to run `Model.watch()` in the `find` blueprint action.
         autoWatch: true,
         // Private per-controller config.
-        _controllers: {},
+        // _controllers: {},
 
         parseBlueprintOptions: function(req) {
-          return req._sails.hooks['sequelize-blueprints'].parseBlueprintOptions(req);
+          console.log(req._sails.hooks);
+          return req._sails.hooks['blueprints'].parseBlueprintOptions(req);
         }
       }
 
