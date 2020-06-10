@@ -1,6 +1,6 @@
 {
   "name": "sails-v1-hook-sequelize-v5-blueprints",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Sails V1.0 Sequelize V5 Hook ",
   "main": "index.js",
   "sails": {
@@ -21,19 +21,19 @@
   "license": "MIT",
   "devDependencies": {
     "mocha": "^2.2.5",
-    "pg": "^4.4.0",
-    "pg-hstore": "^2.3.2",
+    "pg": "^6.4.0",
+    "pg-hstore": "^2.3.3",
     "root-require": "^0.3.1",
-    "sails": "^1.0.1",
+    "sails": "^1.2.4",
     "sails-disk": "^0.10.8",
-    "sequelize": "^4.20.0",
+    "sequelize": "^5.21.12",
     "should": "^7.0.2",
     "supertest": "^1.0.1"
   },
   "dependencies": {
-    "async": "^1.4.0",
+    "async": "^3.2.0",
     "continuation-local-storage": "^3.1.4",
-    "lodash": "^3.10.0",
+    "lodash": "^4.17.15",
     "merge-defaults": "^0.2.1",
     "pluralize": "^1.1.2",
     "sails-stringfile": "^0.3.2",
