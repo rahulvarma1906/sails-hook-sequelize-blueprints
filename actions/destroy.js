@@ -24,10 +24,10 @@ module.exports = function destroyOneRecord (req, res) {
   var pk = actionUtil.requirePk(req);
 
   Model.findByPk(pk, { include: req._sails.config.blueprints.populate ? [{ all: true }] : []})
-  .then( (record) => {
+  .then(function(record) {
     if(!record) return res.notFound('No record found with the specified `id`.');
 
-    Model.destroy({ where: { id: pk }}).then( () => {
+    Model.destroy({ where: { id: pk }}).then(function() {
 
       if (req._sails.hooks.pubsub) {
         Model.publishDestroy(pk, !req._sails.config.blueprints.mirror && req, {previous: record});
@@ -38,10 +38,10 @@ module.exports = function destroyOneRecord (req, res) {
       }
 
       return res.ok(record);
-    }).catch( (err) => {
+    }).catch(function(err){
       return res.negotiate(err);
     });
-  }).catch( (err) => {
+  }).catch(function(err){
     return res.serverError(err);
   });
 };

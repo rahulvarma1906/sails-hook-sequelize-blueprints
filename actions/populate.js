@@ -1,9 +1,8 @@
 /**
  * Module dependencies
  */
-var util = require('util');
-var _ = require('lodash');
-var actionUtil = require('../actionUtil');
+var util = require('util'),
+  actionUtil = require('../actionUtil');
 
 
 /**
@@ -27,19 +26,7 @@ module.exports = function expand(req, res) {
   var Model = actionUtil.parseModel(req);
   var relation = req.options.alias;
   if (!relation || !Model) return res.serverError();
-  function objCompact(obj, strict) {
-    obj = _.reduce(obj, function(memo, value, paramName) {
-      if (strict) {
-        if (value !== undefined && value !== null && value !== false && value !== '') {
-          memo[paramName] = value;
-        }
-      } else if (value !== undefined) {
-          memo[paramName] = value;
-        }
-        return memo;
-    }, {});
-    return obj;
-  }
+
   // Allow customizable blacklist for params.
   req.options.criteria = req.options.criteria || {};
   req.options.criteria.blacklist = req.options.criteria.blacklist || ['limit', 'skip', 'sort', 'id', 'parentid'];
@@ -53,14 +40,14 @@ module.exports = function expand(req, res) {
 
   // Coerce the child PK to an integer if necessary
   if (childPk) {
-    if (Model.attributes[Model.primaryKeys.id.fieldName].type.toLowerCase() === 'integer') {
+    if (Model.attributes[Model.primaryKeys.id.fieldName].type == 'integer') {
       childPk = +childPk || 0;
     }
   }
 
   var where = childPk ? {id: [childPk]} : actionUtil.parseCriteria(req);
 
-  var populate = objCompact({
+  var populate = sails.util.objCompact({
     as: relation,
     model: sails.models[req.options.target.toLowerCase()],
     order: actionUtil.parseSort(req),
@@ -72,7 +59,7 @@ module.exports = function expand(req, res) {
     populate.limit = actionUtil.parseLimit(req);
 
   Model.findByPk(parentPk, { include: [populate] })
-  .then( (matchingRecord) => {
+  .then(function(matchingRecord) {
       if (!matchingRecord) {
         if(Model.associations[relation].associationType === 'BelongsToMany') {
           if (_.has(where, 'id')) return res.notFound('No record found with the specified id.');
@@ -91,7 +78,7 @@ module.exports = function expand(req, res) {
         actionUtil.subscribeDeep(req, matchingRecord);
       }
       return res.ok(matchingRecord[relation]);
-    }).catch( (err) => {
+    }).catch(function(err){
       return res.serverError(err);
     });
 };

@@ -29,6 +29,7 @@ module.exports = function remove(req, res) {
 
   // Get the model class of the child in order to figure out the name of
   // the primary key attribute.
+  var foreign = Model.associations[relation].options.foreignKey;
   var ChildModel = sails.models[req.options.target.toLowerCase()];
   var childPkAttr = ChildModel.primaryKeys.id.fieldName;
 
@@ -53,27 +54,27 @@ module.exports = function remove(req, res) {
     return res.serverError('Missing required child PK.');
   }
 
-  Model.findByPk(parentPk, { include: [{ all: true }]}).then( (parentRecord) => {
+  Model.findByPk(parentPk, { include: [{ all: true }]}).then(function(parentRecord) {
     if (!parentRecord) return res.notFound();
     if (!parentRecord[relation]) return res.notFound();
 
     if (isManyToManyThrough) {
       var throughRemove = { };
       throughRemove[childAttr] = childPk;
-      ThroughModel.destroy({ where: throughRemove }).then( () => {
+      ThroughModel.destroy({ where: throughRemove }).then(function(){
         return returnParentModel();
       })
-      .catch((err) => {
+      .catch(function(err) {
         return res.negotiate(err);
       });
     } else { // not M-M
-      ChildModel.destroy({ where: childRemove }).then( () =>{
+      ChildModel.destroy({ where: childRemove }).then(function(){
         return returnParentModel();
-      }).catch( (err) => {
+      }).catch(function(err){
         return res.negotiate(err);
       });
     }
-  }).catch( (err) =>{
+  }).catch(function(err){
     return res.serverError(err);
   });
 
@@ -81,7 +82,7 @@ module.exports = function remove(req, res) {
     Model.findByPk(parentPk, { include: req._sails.config.blueprints.populate ? [{ all: true }] : [] })
     // .populate(relation)
     // TODO: use populateEach util instead
-    .then( (parentRecord) => {
+    .then(function(parentRecord) {
       if (!parentRecord) return res.serverError();
       if (!parentRecord[Model.primaryKeys.id.fieldName]) return res.serverError();
 
@@ -92,7 +93,7 @@ module.exports = function remove(req, res) {
       }
 
       return res.ok(parentRecord);
-    }).catch( (err) => {
+    }).catch(function(err){
       return res.serverError(err);
     });
   }

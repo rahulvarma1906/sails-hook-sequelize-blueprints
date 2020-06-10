@@ -46,11 +46,11 @@ module.exports = function updateOneRecord (req, res) {
   // (Note: this could be achieved in a single query, but a separate `findOne`
   //  is used first to provide a better experience for front-end developers
   //  integrating with the blueprint API.)
-  Model.findByPk(pk).then( (matchingRecord) => {
+  Model.findByPk(pk).then(function(matchingRecord) {
 
     if (!matchingRecord) return res.notFound();
 
-    Model.update(values, { where: { id: pk }}).then( (records) => {
+    Model.update(values, { where: { id: pk }}).then(function(records) {
       // Because this should only update a single record and update
       // returns an array, just use the first item.  If more than one
       // record was returned, something is amiss.
@@ -74,20 +74,20 @@ module.exports = function updateOneRecord (req, res) {
       // (Note: again, this extra query could be eliminated, but it is
       //  included by default to provide a better interface for integrating
       //  front-end developers.)
-      Model.findByPk(updatedRecord, {include: req._sails.config.blueprints.populate ? [{ all: true }] : []})
-      .then( (populatedRecord) => {
+      var Q = Model.findByPk(updatedRecord, {include: req._sails.config.blueprints.populate ? [{ all: true }] : []})
+      .then(function(populatedRecord) {
         if (!populatedRecord) return res.serverError('Could not find record after updating!');
         res.ok(populatedRecord);
-      }).catch( (err) => {
+      }).catch(function(err){
         return res.serverError(err);
       }); // </foundAgain>
-    }).catch( (err) => {
+    }).catch(function(err){
       // Differentiate between waterline-originated validation errors
       // and serious underlying issues. Respond with badRequest if a
       // validation error is encountered, w/ validation info.
       return res.negotiate(err);
     });
-  }).catch( (err) => {
+  }).catch(function(err){
     return res.serverError(err);
   });
 };

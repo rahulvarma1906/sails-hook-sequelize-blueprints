@@ -6,6 +6,21 @@ var _ = require('@sailshq/lodash'),
     mergeDefaults = require('merge-defaults'),
     flaverr = require('flaverr'),
     util = require('util');
+
+// TODO:
+//
+// Replace the following helper with the version in sails.util:
+// Attempt to parse JSON
+// If the parse fails, return the error object
+// If JSON is falsey, return null
+// (this is so that it will be ignored if not specified)
+function tryToParseJSON (json) {
+  if (typeof json != "string") return null;
+  try {
+    return JSON.parse(json);
+  }
+  catch (e) { return e; }
+}
 /**
  * Utility methods used in built-in blueprint actions.
  *
@@ -40,7 +55,7 @@ var actionUtil = {
 
     var associations = [];
 
-    _.each(sails.models[parentModel].associations, (association) => {
+    _.each(sails.models[parentModel].associations, function(association) {
       // If an alias filter was provided, override the blueprint config.
       if (aliasFilter) {
         shouldPopulate = _.contains(aliasFilter, association.alias);
@@ -67,7 +82,7 @@ var actionUtil = {
       }
     });
 
-    return associations;
+    return associations
   },
   /**
    * Given a request, return an object with appropriate/specified
@@ -92,10 +107,10 @@ var actionUtil = {
       aliasFilter = (aliasFilter) ? aliasFilter.split(',') : [];
     }
 
-    _.each(aliasFilter, (association) => {
+    _.each(aliasFilter, function(association){
       var childModel = sails.models[association.toLowerCase()];
       // iterate through parent model associations
-      _.each(sails.models[parentModel].associations, (relation) => {
+      _.each(sails.models[parentModel].associations, function(relation){
         // check if association match childModel name
         if(relation.target.name === childModel.name) {
           var obj = { model: childModel, as: relation.options.as };
@@ -123,7 +138,7 @@ var actionUtil = {
   populateQuery: function(query, associations, sails) {
     var DEFAULT_POPULATE_LIMIT = (sails && sails.config.blueprints.defaultLimit) || 30;
 
-    return _.reduce(associations, (query, association) => {
+    return _.reduce(associations, function(query, association) {
       var options = {};
       if (association.type === 'collection') {
         options.limit = association.limit || DEFAULT_POPULATE_LIMIT;
@@ -139,7 +154,7 @@ var actionUtil = {
    * @return {[type]}              [description]
    */
   subscribeDeep: function ( req, record ) {
-    _.each(req.options.associations, (assoc) => {
+    _.each(req.options.associations, function (assoc) {
 
       // Look up identity of associated model
       var ident = assoc[assoc.type];
@@ -149,12 +164,12 @@ var actionUtil = {
 
       // Subscribe to each associated model instance in a collection
       if (assoc.type === 'collection') {
-        _.each(record[assoc.alias], (associatedInstance) => {
+        _.each(record[assoc.alias], function (associatedInstance) {
           AssociatedModel.subscribe(req, [associatedInstance[AssociatedModel.primaryKey]]);
         });
       }
       // If there is an associated to-one model instance, subscribe to it
-      else if (assoc.type === 'model' && record[assoc.alias] && typeof record[assoc.alias] === 'object') {
+      else if (assoc.type === 'model' && record[assoc.alias] && typeof record[assoc.alias] == 'object') {
         AssociatedModel.subscribe(req, [record[assoc.alias][AssociatedModel.primaryKey]]);
       }
     });
@@ -219,7 +234,7 @@ var actionUtil = {
     // Look for explicitly specified `where` parameter.
     var where = req.allParams().where;
     // If `where` parameter is a string, try to interpret it as JSON
-    if (typeof where === 'string') {
+    if (typeof where == 'string') {
       try {
         where = JSON.parse(where);
       } catch (e) {
@@ -235,7 +250,7 @@ var actionUtil = {
       // Omit built-in runtime config (like query modifiers)
       where = _.omit(where, blacklist || ['limit', 'skip', 'sort', 'page', 'perPage']);
       // Omit any params w/ undefined values
-      where = _.omit(where, (p) => { if (_.isUndefined(p)) return true; });
+      where = _.omit(where, function (p){ if (_.isUndefined(p)) return true; });
     }
     // Merge w/ req.options.where and return
     where = _.merge({}, req.options.where || {}, where) || undefined;
@@ -264,14 +279,14 @@ var actionUtil = {
     // that we process singular entities.
     var bodyData = Array.isArray(req.body) ? req.body : [req.allParams()];
     // Process each item in the bodyData array, merging with req.options, omitting blacklisted properties, etc.
-    var valuesArray = _.map(bodyData,(element) => {
+    var valuesArray = _.map(bodyData, function(element){
       var values;
       // Merge properties of the element into req.options.value, omitting the blacklist
       values = mergeDefaults(element, _.omit(req.options.values, 'blacklist'));
       // Omit properties that are in the blacklist (like query modifiers)
       values = _.omit(values, blacklist || []);
       // Omit any properties w/ undefined values
-      values = _.omit(values, (p) => { if (!p)return true;});
+      values = _.omit(values, function(p) { if (!p)return true});
 
       return values;
     });
@@ -304,7 +319,7 @@ var actionUtil = {
   parseSort: function (req) {
     var sort = req.param('sort') || req.options.sort;
     if (!sort) {return undefined;}
-    if (typeof sort === 'string') {
+    if (typeof sort == 'string') {
       try {
         sort = JSON.parse(sort);
       } catch(e) {}

@@ -23,11 +23,11 @@ module.exports = function findOneRecord (req, res) {
   var Model = actionUtil.parseModel(req);
   var pk = actionUtil.requirePk(req);
   var populate = actionUtil.populateEach(req);
-  sails.log.debug('BluePrint findOne.js =/=\=/=\= req.options', req.options);
+  sails.log.debug('BluePrint findOne.js =/=\=/=\= req.options', req.options)
 
   Model.findOne({where:{id:pk}, include: req._sails.config.blueprints.populate ?
                                (_.isEmpty(populate) ? [{ all : true}] : populate) : []
-  }).then( (matchingRecord) => {
+  }).then(function(matchingRecord) {
     if(!matchingRecord) return res.notFound('No record found with the specified `id`.');
 
     if (req._sails.hooks.pubsub && req.isSocket) {
@@ -36,7 +36,7 @@ module.exports = function findOneRecord (req, res) {
     }
 
     res.ok(matchingRecord);
-  }).catch( (err) => {
+  }).catch(function(err){
     return res.serverError(err);
   });
 
