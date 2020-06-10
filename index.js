@@ -158,8 +158,8 @@ module.exports = function(sails) {
     bindShadowRoutes: function() {
 
       var config = sails.config.blueprints || {};
-      sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++this.config : ', this.config);
-      sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++config : ', config);
+      // sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++this.config : ', this.config);
+      // sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++config : ', config);
       // Validate blueprint config for this controller
       if ( config.prefix ) {
         if ( typeof config.prefix != 'string' ) {
@@ -215,7 +215,7 @@ module.exports = function(sails) {
       // at each action in the Sails actions dictionary
 
       if ( config.actions ) {
-        sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  ACTIONS ++++++++++');
+        // sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  ACTIONS ++++++++++');
 
         // Loop through each action in the dictionary
         _.each(actions, function(action, key) {
@@ -230,13 +230,13 @@ module.exports = function(sails) {
           sails.router.bind(url, key);
         });
       }
-      sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  sails.hooks ++++++++++',sails.hooks);
+      // sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  sails.hooks ++++++++++',sails.hooks);
 
       if (sails.hooks.orm || !sails.hooks.sequelize || !sails.models )return;
       // If shortcut blueprint routing is turned on, bind CRUD routes
       // for each model using GET-only urls.
       if ( !config.shortcuts ) {
-        sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  SHORTCUTS ++++++++++');
+        // sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  SHORTCUTS ++++++++++');
         // Loop through each model.
         _.each(sails.models, function(Model, identity) {
 
@@ -266,7 +266,7 @@ module.exports = function(sails) {
                   alias;
               if (!foreign)alias =  value.as;
                else alias = foreign.as || foreign.name || foreign;
-               sails.log.debug('Binding "shortcuts" to association blueprint -=-=-> `'+alias+'` for',value);
+               // sails.log.debug('Binding "shortcuts" to association blueprint -=-=-> `'+alias+'` for',value);
 
                _bindAssocRoute('%s/:parentid/%s/add/:id?', 'add', alias);
                _bindAssocRoute( '%s/:parentid/%s/remove/:id?', 'remove', alias);
@@ -293,7 +293,7 @@ module.exports = function(sails) {
       // for each model.
       if ( config.rest ) {
         // Loop throug each model.
-        sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  RESTFULL ++++++++++');
+        // sails.log.debug('BLUE PRINT +++++++bindShadowRoutes++++++++  RESTFULL ++++++++++');
 
         _.each(sails.models, function(Model, identity) {
 
@@ -335,7 +335,7 @@ module.exports = function(sails) {
                   alias;
               if (!foreign)alias =  value.as;
                 else  alias = foreign.as || foreign.name || foreign;
-              sails.log.debug('Binding "rest" to association blueprint -=-=-> `'+alias+'` for',value);
+              // sails.log.debug('Binding "rest" to association blueprint -=-=-> `'+alias+'` for',value);
 
               _bindAssocRoute('post %s/:parentid/%s/:id?', 'add', alias);
               _bindAssocRoute('delete %s/:parentid/%s/:id?', 'remove', alias);
