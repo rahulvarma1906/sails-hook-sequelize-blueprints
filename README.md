@@ -1,8 +1,7 @@
 # sails-hook-sequelize-blueprints
 
 This is a fork of the [sails-hook-sequeliz-blueprints](https://github.com/aristot/sails-hook-sequeliz-blueprints#readme)
-project, expanded to support multiple databases and connections. It's a quick and dirty
-implementation.
+project, expanded to support sails v1.x and sequelize 5.x
 
 # Install
 
