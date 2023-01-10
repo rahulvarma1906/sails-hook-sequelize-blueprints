@@ -20,7 +20,7 @@
   "author": "Rahul Varma Gangalam",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^2.2.5",
+    "mocha": "^10.2.0",
     "pg": "^6.4.0",
     "pg-hstore": "^2.3.3",
     "root-require": "^0.3.1",
